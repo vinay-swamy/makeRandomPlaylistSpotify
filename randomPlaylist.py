@@ -41,6 +41,10 @@ while os<9999:
         track_ids.append(track['uri'])
    
     os=os+50   
+    prog='\r' + str(format(os/10000*100,'.2f'))+'%'
+    #prog=str(format(os/10000*100))
+    sys.stdout.write( prog )
+    sys.stdout.flush()
 
 
 rand=numpy.random.choice(a=range(len(track_ids)),size=num_songs, replace=False)
@@ -52,7 +56,7 @@ if token:
     sp.trace = False
     sp.user_playlist_add_tracks(username, targ_playlist, out_tracks)
 
-print(num_songs, ' songs added to ', first['name'])
+print('\n',num_songs, ' songs added to ', first['name'])
 
 
     
