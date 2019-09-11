@@ -28,7 +28,7 @@ else:
 
 track_ids=[]
 
-sp.user_playlist_create(username,plname,public=True,description='made with makeRandomPlaylist  https://github.com/vinay-swamy/makeRandomPlaylistSpotify/')
+sp.user_playlist_create(username,plname,public=True) #,description='made with makeRandomPlaylist  https://github.com/vinay-swamy/makeRandomPlaylistSpotify/')
 playlists = sp.user_playlists(username)['items']
 id=''
 for i in range(len(playlists)):
@@ -42,7 +42,9 @@ if not id:
 print('getting your saved tracks(this may take a few minutes)')
 os=0
 art2song={}
-while os<9999:
+total=sp.current_user_saved_tracks(limit=50,offset=os)['total'] + 10
+
+while os<total:
     results = sp.current_user_saved_tracks(limit=50,offset=os)
     for item in results['items']:
         track = item['track']
@@ -56,7 +58,7 @@ while os<9999:
     #prog=str(format(os/10000*100))
     sys.stdout.write( prog )
     sys.stdout.flush()
-print(art2song['Faded Paper Figures'])
+#print(art2song['Faded Paper Figures'])
 #
 #
 k=list(art2song.keys())
