@@ -5,13 +5,13 @@ import spotipy
 import spotipy.util as util
 scope = 'user-library-read playlist-modify-private playlist-modify-public'
 client_id='1c4e52b850ef400c985c051b42af8e94'
-client_secret='7094d54d0a434c57a0402741ffa1e03b'
+client_secret=sys.argv[1]
 redirect_uri='http://localhost:8888/callback/'
 # check arguments
-if len(sys.argv) > 2:
-    username = sys.argv[1]
-    num_songs=int(sys.argv[2])
-    plname=sys.argv[3]
+if len(sys.argv) > 3:
+    username = sys.argv[2]
+    num_songs=int(sys.argv[3])
+    plname=sys.argv[4]
 else:
     sys.exit('Bad Arguments')
 
@@ -43,7 +43,7 @@ print('getting your saved tracks(this may take a few minutes)')
 os=0
 art2song={}
 total=sp.current_user_saved_tracks(limit=50,offset=os)['total'] + 10
-
+# a little hacky but it works
 while os<total:
     results = sp.current_user_saved_tracks(limit=50,offset=os)
     for item in results['items']:
@@ -54,7 +54,7 @@ while os<total:
         else:
             art2song[artist]=[track['uri']]
     os=os+50
-    prog='\r' + str(format(os/10000*100,'.2f'))+'%'
+    prog='\r' + str(format(os/total*100,'.2f'))+'%'
     #prog=str(format(os/10000*100))
     sys.stdout.write( prog )
     sys.stdout.flush()

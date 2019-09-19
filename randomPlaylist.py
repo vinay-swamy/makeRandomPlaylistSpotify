@@ -5,16 +5,15 @@ import spotipy
 import spotipy.util as util
 scope = 'user-library-read playlist-modify-private playlist-modify-public'
 client_id='1c4e52b850ef400c985c051b42af8e94'
-client_secret='7094d54d0a434c57a0402741ffa1e03b'
+client_secret=sys.argv[1]
 redirect_uri='http://localhost:8888/callback/'
 # check arguments
-if len(sys.argv) > 2:
-    username = sys.argv[1]
-    num_songs=int(sys.argv[2])
-    plname=sys.argv[3]
+if len(sys.argv) > 3:
+    username = sys.argv[2]
+    num_songs=int(sys.argv[3])
+    plname=sys.argv[4]
 else:
     sys.exit('Bad Arguments')
-
 if num_songs>100 or num_songs<1:
     sys.exit('The number of songs must be between 1 and 100')
 if not os.path.exists('.cache-' + username):
