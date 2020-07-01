@@ -1,19 +1,21 @@
 import sys
 import os
-import numpy
+import random
 import spotipy
 import spotipy.util as util
 scope = 'user-library-read playlist-modify-private playlist-modify-public'
-client_id='1c4e52b850ef400c985c051b42af8e94'
-client_secret=sys.argv[1]
+client_id='f28ebd5ea47c46e2a4a6fc886bccc5f8'
 redirect_uri='http://localhost:8888/callback/'
 # check arguments
 if len(sys.argv) > 3:
+    client_secret=sys.argv[1]
     username = sys.argv[2]
     num_songs=int(sys.argv[3])
     plname=sys.argv[4]
 else:
+    # TODO better help doc
     sys.exit('Bad Arguments')
+# TODO get rid of these by sending multiple requests at the end
 if num_songs>100 or num_songs<1:
     sys.exit('The number of songs must be between 1 and 100')
 if not os.path.exists('.cache-' + username):
@@ -25,8 +27,11 @@ else:
     sys.exit('Bad token')
 
 
+# TODO cache this
 track_ids=[]
 
+# TODO create playlist lazily
+# TODO (w/ confirmation) overwrite existing playlist if exists
 sp.user_playlist_create(username,plname,public=True,description='made with makeRandomPlaylist')
 playlists = sp.user_playlists(username)['items']
 id=''
@@ -40,7 +45,9 @@ if not id:
 #get user saved tracks, spotify api only lets you get 50 songs per query, so have to repeateadly query
 print('getting your saved tracks(this may take a few minutes)')
 os=0
+# TODO optional limit for how many tracks to download for faster development
 while os<9999:
+    # TODO pull out limit as constant and make optional arg
     results = sp.current_user_saved_tracks(limit=50,offset=os)
     for item in results['items']:
         track = item['track']
@@ -53,7 +60,7 @@ while os<9999:
     sys.stdout.flush()
 
 
-rand=numpy.random.choice(a=range(len(track_ids)),size=num_songs, replace=False)
+rand=random.sample(range(len(track_ids)),num_songs)
 out_tracks=[]
 for i in rand:
     out_tracks.append(track_ids[i])
