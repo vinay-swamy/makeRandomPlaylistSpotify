@@ -85,7 +85,6 @@ for i in rand:
 if token:
     sp = spotipy.Spotify(auth=token)
     sp.trace = False
-    print(out_tracks)
     sp.user_playlist_add_tracks(username, id, out_tracks)
 
 print('\n',num_songs, 'songs added to', playlist_name)
