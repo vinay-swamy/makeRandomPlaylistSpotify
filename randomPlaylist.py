@@ -37,10 +37,6 @@ if token:
 else:
     sys.exit('Bad token')
 
-
-# TODO cache this
-track_ids=[]
-
 # TODO create playlist lazily
 # TODO (w/ confirmation) overwrite existing playlist if exists
 sp.user_playlist_create(username,playlist_name,public=True,description='made with makeRandomPlaylist')
@@ -52,24 +48,35 @@ for i in range(len(playlists)):
 if not id:
     sys.exit('unable to find uri for playlist')
 
+if not os.path.isfile('cache.txt'):
+    open('cache.txt', 'w').close()
 
-#get user saved tracks, spotify api only lets you get 50 songs per query, so have to repeateadly query
-print('getting your saved tracks(this may take a few minutes)')
-os=0
-# TODO optional limit for how many tracks to download for faster development
-while os<9999:
-    # TODO pull out limit as constant and make optional arg
-    results = sp.current_user_saved_tracks(limit=50,offset=os)
-    for item in results['items']:
-        track = item['track']
-        track_ids.append(track['uri'])
-
-    os=os+50
-    prog='\r' + str(format(os/10000*100,'.2f'))+'%'
-    #prog=str(format(os/10000*100))
-    sys.stdout.write( prog )
-    sys.stdout.flush()
-
+cache_file = open('cache.txt', 'r')
+cache_str = cache_file.readline()
+if len(cache_str) > 2:
+    print('Saved tracks are cached, no need to download.')
+    track_ids = cache_str.split(',')
+    cache_file.close()
+else:
+    # TODO pass in max tracks to download as arg for faster development
+    print('Downloading your saved tracks ...')
+    os = 0
+    track_ids = []
+    while os < 9999:
+        # TODO pull out limit as constant and make optional arg
+        results = sp.current_user_saved_tracks(limit=50,offset=os)
+        for item in results['items']:
+            track = item['track']
+            track_ids.append(track['uri'])
+    
+        os = os+50
+        prog = '\r' + str(format(os/10000*100,'.2f'))+'%'
+        sys.stdout.write( prog )
+        sys.stdout.flush()
+    
+    cache_file = open('cache.txt', 'w')
+    cache_file.write(','.join(track_ids))
+    cache_file.close()
 
 rand=random.sample(range(len(track_ids)),num_songs)
 out_tracks=[]
@@ -78,6 +85,7 @@ for i in rand:
 if token:
     sp = spotipy.Spotify(auth=token)
     sp.trace = False
+    print(out_tracks)
     sp.user_playlist_add_tracks(username, id, out_tracks)
 
-print('\n',num_songs, ' songs added to ', playlist_name)
+print('\n',num_songs, 'songs added to', playlist_name)
