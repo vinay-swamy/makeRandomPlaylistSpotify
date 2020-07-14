@@ -7,11 +7,12 @@ import spotipy.util as util
 
 # constants
 SCOPE = 'user-library-read playlist-modify-private playlist-modify-public'
-CLIENT_ID='f28ebd5ea47c46e2a4a6fc886bccc5f8'
+
 REDIRECT_URI='http://localhost:8888/callback/'
 
 parser = argparse.ArgumentParser(description='Makes a random playlist')
 parser.add_argument('client_secret', type=str)
+parser.add_argument('client_id', type=str)
 parser.add_argument('username', type=str)
 parser.add_argument('num_songs', type=int)
 parser.add_argument('playlist_name', type=str)
@@ -19,6 +20,7 @@ parser.add_argument('playlist_name', type=str)
 args = parser.parse_args()
 
 client_secret = args.client_secret
+CLIENT_ID=args.client_id
 username = args.username
 num_songs = args.num_songs
 playlist_name = args.playlist_name
